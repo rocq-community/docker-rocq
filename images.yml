@@ -1,0 +1,44 @@
+---
+base_url: 'https://gitlab.com/user/docker-repo'
+active: false
+# Define global build arguments here:
+args:
+  COQ_TAG: '{matrix[coq]}'
+  MATHCOMP_VERSION: '{matrix[mathcomp]}'
+docker_repo: 'mathcomp/mathcomp'
+images:
+  - matrix:
+      coq: ['dev']
+      mathcomp: ['1.11.0']
+    build:
+      nightly: true
+      context: '.'
+      dockerfile: './stable/Dockerfile'
+      # (unnneeded here, as these args are defined globally)
+      # args:
+      #   COQ_TAG: '{matrix[coq]}'
+      #   MATHCOMP_VERSION: '{matrix[mathcomp]}'
+      tags:
+        - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
+        # to remove on next release
+        - tag: 'latest-coq-{matrix[coq]}'
+  - matrix:
+      coq: ['8.12', '8.11', '8.10', '8.9', '8.8', '8.7']
+      mathcomp: ['1.11.0']
+    build:
+      context: '.'
+      dockerfile: './stable/Dockerfile'
+      # (here again, global-defined args are enough)
+      tags:
+        - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
+        # to remove on next release
+        - tag: 'latest-coq-{matrix[coq]}'
+  - matrix:
+      coq: ['8.11', '8.10', '8.9', '8.8', '8.7']
+      mathcomp: ['1.10.0']
+    build:
+      context: '.'
+      dockerfile: './stable/Dockerfile'
+      # (here again, global-defined args are enough)
+      tags:
+        - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
