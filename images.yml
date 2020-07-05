@@ -1,17 +1,19 @@
 ---
 base_url: 'https://gitlab.com/user/docker-repo'
+docker_repo: 'user/repo'
 active: false
-# Define global build arguments here:
+# (define below the global build arguments, if applicable)
 args:
+  BUILD_DATE: '{defaults[build_date]}'
   COQ_TAG: '{matrix[coq]}'
   MATHCOMP_VERSION: '{matrix[mathcomp]}'
-docker_repo: 'mathcomp/mathcomp'
 images:
   - matrix:
       coq: ['dev']
       mathcomp: ['1.11.0']
     build:
       nightly: true
+      # (relative path that notably contains the .dockerignore file)
       context: '.'
       dockerfile: './stable/Dockerfile'
       # (unnneeded here, as these args are defined globally)
@@ -42,3 +44,8 @@ images:
       # (here again, global-defined args are enough)
       tags:
         - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
+
+# For more examples, you can have a look at one of these YAML specs:
+# https://gitlab.com/coq-community/docker-base/-/blob/master/images.yml
+# https://gitlab.com/coq-community/docker-coq/-/blob/master/images.yml
+# https://gitlab.com/math-comp/docker-mathcomp/-/blob/master/images.yml
