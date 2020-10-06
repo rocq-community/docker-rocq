@@ -22,6 +22,10 @@ See also the [docker-coq wiki](https://github.com/coq-community/docker-coq/wiki)
 
 ## Note to maintainers
 
+The CI failure in the [docker-keeper-template repo](https://gitlab.com/erikmd/docker-keeper-template)
+(and thereby in your fork) is OK.
+It is just due to the fact the [images.yml](./images.yml) file initially contains `active: false`.
+
 This repository incorporates the
 [docker-keeper](https://gitlab.com/erikmd/docker-keeper) tool as a
 [subtree](https://www.atlassian.com/git/tutorials/git-subtree).
