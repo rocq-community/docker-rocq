@@ -1,0 +1,325 @@
+---
+# Author: Erik Martin-Dorel, 2020-2024
+
+# Design:
+# - docker-keeper: Lint python scripts (Use flake8)
+# - On push for all branches:
+#   - Lint images.yml (Use cytopia/yamllint)
+#   - Read images.yml (Use pyyaml)
+#   - Compute the list of images tags foreach item and store it as artifact
+#   - Check that these images tags are disjoint
+# - Compute the list of Dockerfiles and store it as artifact
+#   - Lint the Dockerfiles (mentioned in generated/Dockerfiles.txt)
+#   - Gen README.md as artifact (Supported tags and respective Dockerfile links)
+#     (cf. https://hub.docker.com/_/debian/) (with GitLab hyperlinks)
+#   - Get the list of remote tags and store it as artifact
+#   - Compute the symmetric difference of tags and store it as artifact
+# - On push for master (protected branch):
+#   - Foreach Dockerfile spec from images.yml (following the list order):
+#     - If one of the associated tags does not exists, or with a --rebuild flag:
+#       - Run 1 job per Dockerfile spec
+#       - Push the image to Docker Hub foreach required tag
+#   - Document how to Remove the old tags from Docker Hub
+#     (see also https://github.com/docker/roadmap/issues/115)
+#   - Document how to Update the README.md
+#     - Upload URL: https://hub.docker.com/repository/docker/user/repo
+#     - Download URL:
+#       - $CI_JOB_URL = https://gitlab.com/coq/coq/-/jobs/$CI_JOB_ID
+#       - $CI_JOB_URL/artifacts/file/generated/README.md
+#       - $CI_JOB_URL/artifacts/raw/generated/README.md?inline=false
+# - On scheduled pipelines for master:
+#   - Run relevant jobs above (alpha releases | dev -> nightly build)
+#   - Run verification that the docker-make subtree is up-to-date (once a day)
+# - On manual pipelines:
+#   - Run relevant jobs for master (taking account --rebuild or so flags)
+#   - Document the procedure to rebuild images
+#
+# - documentation to update docker-keeper using git-subtree
+# - [TODO] documentation suggesting Dockerfile sources
+#
+# - [TODO] docker-base & docker-coq: CONTRIBUTE.md → GitHub PRs
+# - docker-keeper-template: 'active: false', link to wiki
+
+variables:
+  # default relative path (subtree prefix)
+  KEEPER_SUBTREE: external/docker-keeper
+
+stages:
+  - lint-src
+  - compile
+  - prepare-ci
+  - lint-ci
+  - trigger-ci
+  - notify
+
+.lint-yaml:
+  dependencies: []  # optional
+  variables:
+    FILENAME: existing-file-name  # to override in child jobs
+  image:
+    name: cytopia/yamllint
+    entrypoint: ["/bin/ash", "-c"]
+  # cf. https://yamllint.readthedocs.io/en/stable/configuration.html
+  script: |
+    echo "$FILENAME"
+    yamllint -f colored -d '{extends: default, rules: {line-length: {level: warning}}}' "$FILENAME"
+
+.python:
+  dependencies: []  # optional
+  image: python:3-alpine
+  before_script:
+    - pip install --no-cache-dir -r "$KEEPER_SUBTREE/requirements.txt"
+
+lint-images:
+  stage: lint-src
+  extends: .lint-yaml
+  variables:
+    FILENAME: 'images.yml'
+
+prepare-artifacts:
+  stage: compile
+  extends: .python
+  image: python:3  # default shell: /bin/bash, OS: Debian
+  script:
+    - apt-get update -y -q
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y -q git
+    - apt-get clean
+    - rm -rf /var/lib/apt/lists/*
+    - git rev-parse --verify HEAD
+    - git describe --all --long --abbrev=40 --always --dirty
+    - mkdir -p generated
+    - echo "$CI_JOB_URL" > generated/CI_JOB_URL.txt
+    - |
+      # Launch keeper.py with proper options
+      run() {
+        echo -n 'RUN '
+        for arg; do printf "'%s' " "${arg//\'/\'\\\'\'}"; done
+        echo
+        "$@"
+      }
+      # Detect if it's the first pipeline run for the current commit
+      # See https://docs.gitlab.com/ee/ci/variables/predefined_variables.html#predefined-variables-reference
+      echo "SHELL=$SHELL"  # for debugging purpose
+      echo "CI_COMMIT_BEFORE_SHA=$CI_COMMIT_BEFORE_SHA"
+      echo "CI_COMMIT_SHA=$CI_COMMIT_SHA"
+      declare -a DOCKER_KEEPER_CMDS
+      # The previous latest commit present on a branch or tag.
+      # Is always `0000000000000000000000000000000000000000` for
+      # merge request pipelines, the first commit in pipelines for branches or tags,
+      # *or when manually running a pipeline*.
+      # Remark for testing: coqbot+gitlab-ci may run 2 pipelines (branch/pull request)
+      if [ "$CI_COMMIT_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+        echo "Parsing commit message {|$CI_COMMIT_MESSAGE|}."
+        readarray -t lines < <(grep "\(^\|(\| \|;\)docker-keeper)\?:" <<< "$CI_COMMIT_MESSAGE")
+        for line in "${lines[@]}"; do
+          cmd=$(sed -e 's/^.*docker-keeper)\?: *//g' <<< "$line")
+          readarray -t cmds < <(sed -e 's/; */\n/g' <<< "$cmd")
+          for cmd in "${cmds[@]}"; do
+            # put the command in the end of the array (note: should NOT be greedy)
+            DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="$(sed -e 's/: */=/' <<< "$cmd")"
+          done
+        done
+      else
+        echo "Skipping commit message."
+      fi
+      if [ -z "$CRON_MODE" ]; then
+      # Keep this name by backward compatibility
+      # We could replace it with a MORE expressive SINGLE variable DOCKER_KEEPER
+        echo "Pipeline variable CRON_MODE was empty."
+      elif [ "$CRON_MODE" = "minimal" ]; then
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="minimal"
+      elif [ "$CRON_MODE" = "nightly" ]; then
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="nightly"
+      elif [ "$CRON_MODE" = "rebuild-all" ]; then
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-all"
+      # BEGIN Keep this by backward compatibility (we could remove it later on):
+      elif [ "$CRON_MODE" = "rebuild-files" ]; then
+        if [ -z "$ITEMS" ]; then
+          echo "Error: file variable ITEMS is missing (CRON_MODE='$CRON_MODE')."
+          false
+        else
+          run cat "$ITEMS"
+        fi
+        readarray -t ar_items < "$ITEMS"
+        items="${ar_items[@]/#/,}"
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-file=${items#,}"
+      elif [ "$CRON_MODE" = "rebuild-tags" ]; then
+        if [ -z "$ITEMS" ]; then
+          echo "Error: file variable ITEMS is missing (CRON_MODE='$CRON_MODE')."
+          false
+        else
+          run cat "$ITEMS"
+        fi
+        readarray -t ar_items < "$ITEMS"
+        items="${ar_items[@]/#/,}"
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-tag=${items#,}"
+      elif [ "$CRON_MODE" = "rebuild-keywords" ]; then
+        if [ -z "$ITEMS" ]; then
+          echo "Error: file variable ITEMS is missing (CRON_MODE='$CRON_MODE')."
+          false
+        else
+          run cat "$ITEMS"
+        fi
+        readarray -t ar_items < "$ITEMS"
+        items="${ar_items[@]/#/,}"
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-keyword=${items#,}"
+      # END Keep this by backward compatibility (we could remove it later on).
+      elif [ "$CRON_MODE" = "rebuild-file" ]; then
+        if [ -z "$ITEM" ]; then
+          echo "Error: variable ITEM is missing (CRON_MODE='$CRON_MODE')."
+          false
+        else
+          echo "ITEM=$ITEM"
+        fi
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-file=$ITEM"
+      elif [ "$CRON_MODE" = "rebuild-tag" ]; then
+        if [ -z "$ITEM" ]; then
+          echo "Error: variable ITEM is missing (CRON_MODE='$CRON_MODE')."
+          false
+        else
+          echo "ITEM=$ITEM"
+        fi
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-tag=$ITEM"
+      elif [ "$CRON_MODE" = "rebuild-keyword" ]; then
+        if [ -z "$ITEM" ]; then
+          echo "Error: variable ITEM is missing (CRON_MODE='$CRON_MODE')."
+          false
+        else
+          echo "ITEM=$ITEM"
+        fi
+        DOCKER_KEEPER_CMDS[${#DOCKER_KEEPER_CMDS[@]}]="rebuild-keyword=$ITEM"
+      else
+        echo "Error: unexpected value CRON_MODE='$CRON_MODE'."
+        false
+      fi
+      # BEGIN main command
+      run "$KEEPER_SUBTREE/keeper.py" write-artifacts "${DOCKER_KEEPER_CMDS[@]/#/--}"
+      # END main command
+  artifacts:
+    name: "docker-keeper_$CI_JOB_NAME"
+    when: always
+    paths:
+      - generated/build_data_all.json
+      - generated/build_data_min.json
+      - generated/build_data_chosen.json
+      - generated/remote_tags.txt
+      - generated/remote_tags_to_rm.json
+      - generated/propagate.json
+      - generated/gitlab_ci_tags.txt
+      - generated/Dockerfiles.txt
+      - generated/README.md
+      - generated/docker_repo.txt
+      - generated/CI_JOB_URL.txt
+    expire_in: 6 months
+  except:
+    - tags
+
+check-updates:
+  stage: compile
+  extends: .python
+  only:
+    - schedules
+  allow_failure: true
+  script: |
+    if [ "$CRON_MODE" = "nightly" ]; then
+      version=$("$KEEPER_SUBTREE/keeper.py" --version)
+      upstream=$("$KEEPER_SUBTREE/keeper.py" --upstream-version 2>/dev/null)
+      upstream_repo="https://gitlab.com/erikmd/docker-keeper.git"
+      if [ "$version" != "$upstream" ]; then
+    cat <<EOF
+    You need to update docker-keeper : $version -> $upstream, by doing:
+      cd \$(git rev-parse --show-toplevel)
+      git subtree pull --squash -P $KEEPER_SUBTREE $upstream_repo master
+    EOF
+        false
+      else
+        echo "docker-keeper $version is up-to-date"
+      fi
+    else
+      echo "Doing nothing... You may want to set CRON_MODE='nightly'."
+      false  # could be removed
+    fi
+
+prepare-config:
+  stage: prepare-ci
+  extends: .python
+  dependencies:  # OVERRIDE
+    - prepare-artifacts
+  script:
+    - '"$KEEPER_SUBTREE/keeper.py" generate-config > generated/build.yml'
+    # - cat generated/build.yml
+  artifacts:
+    name: "docker-keeper_$CI_JOB_NAME"
+    when: always
+    paths:
+      - generated/build.yml
+    expire_in: 6 months
+  except:
+    - tags
+
+lint-dockerfiles:
+  stage: prepare-ci  # or could be lint-ci
+  dependencies:
+    - prepare-artifacts
+  needs:
+    - prepare-artifacts
+  image:
+    name: hadolint/hadolint:latest-alpine
+    entrypoint: ["/bin/ash", "-c"]
+  allow_failure: true
+  script: |
+    hadolint --version
+    cat generated/Dockerfiles.txt
+    cat generated/Dockerfiles.txt | tr '\n' '\0' | xargs -0 -n1 hadolint
+
+lint-config:
+  stage: lint-ci
+  extends: .lint-yaml
+  dependencies:  # OVERRIDE
+    - prepare-config
+  variables:
+    GIT_STRATEGY: none
+    FILENAME: 'generated/build.yml'
+  except:
+    - tags
+
+trigger-build:
+  stage: trigger-ci
+  only:
+    - master
+  trigger:
+    include:
+      - artifact: generated/build.yml
+        job: prepare-config
+    strategy: depend
+
+debrief:
+  stage: notify
+  dependencies:
+    - prepare-artifacts
+  image: alpine:latest
+  variables:
+    GIT_STRATEGY: none
+  except:
+    - tags
+  script: |+
+    v_CI_JOB_URL=$(cat generated/CI_JOB_URL.txt)
+    v_docker_repo=$(cat generated/docker_repo.txt)
+    cat <<EOF
+    End of the pipeline.
+    Please perform the following tasks:
+    1.
+       Browse:
+       https://hub.docker.com/repository/docker/${v_docker_repo}/tags
+       and remove manually the extraneous tags mentioned in:
+       ${v_CI_JOB_URL}/artifacts/file/generated/remote_tags_to_rm.json
+    2.
+       Browse:
+       https://hub.docker.com/repository/docker/${v_docker_repo}/general
+       and update manually the README from:
+       ${v_CI_JOB_URL}/artifacts/raw/generated/README.md?inline=false
+    (*
+     * Note: both tasks cannot be automated yet, until
+     * https://github.com/docker/roadmap/issues/115 is implemented.
+     *)
+    EOF
