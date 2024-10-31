@@ -1,51 +1,73 @@
 ---
-base_url: 'https://gitlab.com/user/docker-repo'
-docker_repo: 'user/repo'
-active: false
-# (define below the global build arguments, if applicable)
+base_url: 'https://gitlab.com/coq-community/docker-rocq'
+active: true
+docker_repo: 'rocq/rocq-prover'
+# vars:
+  # TODO: Update when appropriate
+  # coq_latest: '8.20.0'
 args:
   BUILD_DATE: '{defaults[build_date]}'
-  COQ_TAG: '{matrix[coq]}'
-  MATHCOMP_VERSION: '{matrix[mathcomp]}'
+# propagate:
+#   mathcomp:
+#     api_token_env_var: 'DMC_TOKEN'
+#     gitlab_domain: 'gitlab.inria.fr'
+#     gitlab_project: '44938'
+#     strategy:
+#       - when: 'rebuild-all'
+#         mode: 'rebuild-all'
+#       - when: 'forall'
+#         expr: '{matrix[coq][//pl/.][%.*]}'
+#         subset: '8.4,8.5'
+#         mode: 'nil'
+#       - # when OPTIONAL for last rule
+#         mode: 'rebuild-keyword'
+#         item: '{keywords[/#/,][#,]}'
+#   mathcomp-dev:
+#     api_token_env_var: 'MC_TOKEN'
+#     gitlab_domain: 'gitlab.inria.fr'
+#     gitlab_project: '44939'
+#     strategy:
+#       - when: 'rebuild-all'
+#         mode: 'minimal'
+#       - when: 'forall'
+#         expr: '{matrix[coq]}'
+#         subset: 'dev'
+#         mode: 'nightly'
+#       - when: 'exists'
+#         expr: '{matrix[coq][//pl/.][%.*]}'
+#         subset: '8.18,8.19,8.20,dev'
+#         mode: 'minimal'
+#       - # when OPTIONAL for last rule
+#         mode: 'nil'
 images:
+  ## rocq/rocq-prover:dev
+  ## rocq/rocq-prover:dev-ocaml-*
   - matrix:
-      coq: ['dev']
-      mathcomp: ['1.11.0']
-    build:
-      nightly: true
-      # (relative path that notably contains the .dockerignore file)
-      context: '.'
-      dockerfile: './stable/Dockerfile'
-      # (unnneeded here, as these args are defined globally)
-      # args:
-      #   COQ_TAG: '{matrix[coq]}'
-      #   MATHCOMP_VERSION: '{matrix[mathcomp]}'
+      default: ['4.14.2-flambda']
+      base: ['4.14.2-flambda']
+      rocq: ['dev']
+    build: &build_rocq_dev
+      keywords:
+        - 'dev'
+      context: './rocq'
+      dockerfile: './dev/Dockerfile'
+      commit_api:
+        fetcher: 'github'
+        repo: 'coq/coq'
+        branch: 'master'
+      args:
+        BASE_TAG: '{matrix[base]}'
+        ROCQ_VERSION: '{matrix[rocq]}'
+        ROCQ_COMMIT: '{defaults[commit]}'
+        VCS_REF: '{defaults[commit][0:7]}'
+        ROCQ_EXTRA_OPAM: 'coq-bignums'
+        ROCQ_INSTALL_SERAPI: ''
+        # as coq-serapi is not kept compatible with coq.dev for now
       tags:
-        - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
-        # to remove on next release
-        - tag: 'latest-coq-{matrix[coq]}'
-  - matrix:
-      coq: ['8.12', '8.11', '8.10', '8.9', '8.8', '8.7']
-      mathcomp: ['1.11.0']
-    build:
-      context: '.'
-      dockerfile: './stable/Dockerfile'
-      # (here again, global-defined args are enough)
-      tags:
-        - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
-        # to remove on next release
-        - tag: 'latest-coq-{matrix[coq]}'
-  - matrix:
-      coq: ['8.11', '8.10', '8.9', '8.8', '8.7']
-      mathcomp: ['1.10.0']
-    build:
-      context: '.'
-      dockerfile: './stable/Dockerfile'
-      # (here again, global-defined args are enough)
-      tags:
-        - tag: '{matrix[mathcomp]}-coq-{matrix[coq]}'
-
-# For more examples, you can have a look at one of these YAML specs:
-# https://gitlab.com/coq-community/docker-base/-/blob/master/images.yml
-# https://gitlab.com/coq-community/docker-coq/-/blob/master/images.yml
-# https://gitlab.com/math-comp/docker-mathcomp/-/blob/master/images.yml
+        # full tag
+        - tag: '{matrix[rocq]}-ocaml-{matrix[base]}'
+        # abbreviated tag (*-ocaml-4.13-flambda)
+        - tag: '{matrix[rocq]}-ocaml-{matrix[base][%.*-*]}-flambda'
+        # default tag (dev)
+        - tag: '{matrix[rocq]}'
+          if: '{matrix[base]} == {matrix[default]}'
