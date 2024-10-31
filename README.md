@@ -12,6 +12,8 @@ This repository provides [Docker](https://www.docker.com/) images of the [Rocq P
 
 These images are based on [this parent image](https://hub.docker.com/r/coqorg/base/), itself based on [Debian 12 Slim](https://hub.docker.com/_/debian/) and relying on [opam 2.0](https://opam.ocaml.org/doc/Manual.html).
 
+<!-- TODO gh-action..debian tabular -->
+
 See also the [docker-coq wiki](https://github.com/coq-community/docker-coq/wiki) for details about how to use such images locally or in a CI context.
 
 This Dockerfile repository is [mirrored on GitLab](https://gitlab.com/coq-community/docker-rocq), but [issues](https://github.com/coq-community/docker-rocq/issues) and [pull requests](https://github.com/coq-community/docker-rocq/pulls) are tracked on GitHub.
