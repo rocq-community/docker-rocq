@@ -18,11 +18,12 @@ RUN set -x \
   && opam repository add --all-switches --set-default coq-extra-dev https://coq.inria.fr/opam/extra-dev \
   && opam repository add --all-switches --set-default coq-core-dev https://coq.inria.fr/opam/core-dev \
   && opam update -y -u \
+  && opam pin add -n -y -k git rocq-runtime.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
   && opam pin add -n -y -k git coq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
   && opam pin add -n -y -k git rocq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
   && opam pin add -n -y -k git coqide-server.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
   && opam pin add -n -y -k git coq.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam install -y -v -j "${NJOBS}" coq-core rocq-core coqide-server coq ${ROCQ_EXTRA_OPAM} \
+  && opam install -y -v -j "${NJOBS}" rocq-runtime coq-core rocq-core coqide-server coq ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
   # TODO-LATER: Use /home/rocq
   && chmod -R g=u /home/coq/.opam \
