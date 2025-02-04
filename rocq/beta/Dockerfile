@@ -16,6 +16,7 @@ RUN set -x \
   && opam repository add --all-switches --set-default rocq-extra-dev https://coq.inria.fr/opam/extra-dev \
   && opam repository add --all-switches --set-default rocq-core-dev https://coq.inria.fr/opam/core-dev \
   && opam update -y -u \
+  && opam pin add -n -k version rocq-stdlib ${ROCQ_VERSION} \
   && opam pin add -n -k version rocq-prover ${ROCQ_VERSION} \
   && opam install -y -v -j "${NJOBS}" rocq-prover ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
