@@ -7,8 +7,6 @@ ENV ROCQ_EXTRA_OPAM="${ROCQ_EXTRA_OPAM}"
 ARG ROCQ_VERSION="dev"
 ENV ROCQ_VERSION=${ROCQ_VERSION}
 
-ARG ROCQ_COMMIT
-
 # This line is actually unneeded (was already enabled in rocq/base)
 SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 
@@ -18,13 +16,8 @@ RUN set -x \
   && opam repository add --all-switches --set-default rocq-extra-dev https://coq.inria.fr/opam/extra-dev \
   && opam repository add --all-switches --set-default rocq-core-dev https://coq.inria.fr/opam/core-dev \
   && opam update -y -u \
-  && opam pin add -n -y -k git rocq-runtime.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git rocq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git rocq-prover.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git coqide-server.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git coq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git coq.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam install -y -v -j "${NJOBS}" rocq-runtime rocq-core rocq-prover coqide-server coq-core coq ${ROCQ_EXTRA_OPAM} \
+  && opam pin add -n -k version rocq-prover ${ROCQ_VERSION} \
+  && opam install -y -v -j "${NJOBS}" rocq-prover ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
   && chmod -R g=u /home/rocq/.opam \
   && opam config list && opam list
