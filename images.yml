@@ -133,7 +133,7 @@ images:
   - matrix:
       default: ['4.14.2']
       base: ['4.14.2', '4.14.2-flambda']
-      rocq: ['9.20-rc1']
+      rocq: ['9.0-rc1']
     build:
       <<: *build_rocq_alpha
       args:
@@ -163,3 +163,107 @@ images:
         # abbreviated tag (9.0-native-flambda)
         - tag: '{matrix[rocq][%-*]}-native-flambda'
           if: '{matrix[base]} != {matrix[default]}' # -flambda
+  ################################################################
+  # TODO: Uncomment when the v8.21 branch is created
+  ## coqorg/coq:8.21-alpha
+  # - matrix:
+  #     default: ['4.13.1-flambda']
+  #     # only *-flambda switches
+  #     base: ['4.14.2-flambda', '4.13.1-flambda', '4.12.1-flambda', '4.09.1-flambda']
+  #     # TODO: Bump to 8.21-rc1 when appropriate
+  #     coq: ['8.21-alpha']
+  #   build: &build_coq_alpha
+  #     # TODO: Remove this commit_api section when the rc is tagged
+  #     commit_api:
+  #       fetcher: 'github'
+  #       repo: 'coq/coq'
+  #       branch: 'v8.21'
+  #     context: './coq'
+  #     # TODO: Replace when the rc is tagged
+  #     dockerfile: './dev/Dockerfile'
+  #     # dockerfile: './beta/Dockerfile'
+  #     keywords:
+  #       # TODO: replace when the rc is tagged
+  #       - '{matrix[coq][%-alpha]}'
+  #       # - '{matrix[coq][%-*]}'
+  #     args:
+  #       BASE_TAG: 'coq_{matrix[base]}'
+  #       COQ_VERSION: '{matrix[coq][//-/+]}'
+  #       # TODO: Remove COQ_COMMIT when the rc is tagged
+  #       COQ_COMMIT: '{defaults[commit]}'
+  #       # TODO: Replace when the rc is tagged
+  #       VCS_REF: '{defaults[commit][0:7]}'
+  #       # VCS_REF: 'V{matrix[coq][//-/+]}'
+  #       COQ_EXTRA_OPAM: 'coq-bignums'
+  #       # +- coq-native
+  #       # TODO: Replace when the rc is tagged
+  #       COQ_INSTALL_SERAPI: 'false'
+  #       # COQ_INSTALL_SERAPI: 'true'
+  #       # (or any nonempty string) as coq-serapi supports ocaml 4.07.1+
+  #     tags:
+  #       # full tag
+  #       - tag: '{matrix[coq]}-ocaml-{matrix[base]}'
+  #       # abbreviated tag (*-ocaml-4.13-flambda)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[coq][%-alpha]}-ocaml-{matrix[base][%.*-*]}-flambda'
+  #       # - tag: '{matrix[coq][%-*]}-ocaml-{matrix[base][%.*-*]}-flambda'
+  #       # default tag (8.21-alpha)
+  #       - tag: '{matrix[coq]}'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # abbreviated tag (8.21)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[coq][%-alpha]}'
+  #       # - tag: '{matrix[coq][%-*]}'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  ## coqorg/coq:8.21-alpha-native
+  # - matrix:
+  #     default: ['4.13.1']
+  #     base: ['4.13.1', '4.13.1-flambda']
+  #     # TODO: Bump to 8.21-rc1 when appropriate
+  #     coq: ['8.21-alpha']
+  #   build:
+  #     <<: *build_coq_alpha
+  #     args:
+  #       BASE_TAG: 'coq_{matrix[base]}'
+  #       COQ_VERSION: '{matrix[coq][//-/+]}'
+  #       # TODO: Remove COQ_COMMIT when the rc is tagged
+  #       COQ_COMMIT: '{defaults[commit]}'
+  #       # TODO: Replace when the rc is tagged
+  #       VCS_REF: '{defaults[commit][0:7]}'
+  #       # VCS_REF: 'V{matrix[coq][//-/+]}'
+  #       COQ_EXTRA_OPAM: 'coq-native coq-bignums'
+  #       # +- coq-native
+  #       # TODO: Replace when the rc is tagged
+  #       COQ_INSTALL_SERAPI: 'false'
+  #       # COQ_INSTALL_SERAPI: 'true'
+  #       # (or any nonempty string) as coq-serapi supports ocaml 4.07.1+
+  #     tags:
+  #       # full tag
+  #       - tag: '{matrix[coq]}-native-ocaml-{matrix[base]}'
+  #       # abbreviated tag (*-ocaml-4.13)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[coq][%-alpha]}-native-ocaml-{matrix[base][%.*]}'
+  #       # - tag: '{matrix[coq][%-*]}-native-ocaml-{matrix[base][%.*]}'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # abbreviated tag (*-ocaml-4.13-flambda)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[coq][%-alpha]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
+  #       # - tag: '{matrix[coq][%-*]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
+  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
+  #       # default tag (8.21-alpha-native)
+  #       - tag: '{matrix[coq]}-native'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # default tag (8.21-alpha-native-flambda)
+  #       - tag: '{matrix[coq]}-native-flambda'
+  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
+  #       # abbreviated tag (8.21-native)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[coq][%-alpha]}-native'
+  #       # - tag: '{matrix[coq][%-*]}-native'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # abbreviated tag (8.21-native-flambda)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[coq][%-alpha]}-native-flambda'
+  #       # - tag: '{matrix[coq][%-*]}-native-flambda'
+  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
+  ################################################################
