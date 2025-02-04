@@ -2,9 +2,9 @@
 base_url: 'https://gitlab.com/coq-community/docker-rocq'
 active: true
 docker_repo: 'rocq/rocq-prover'
-# vars:
+vars:
   # TODO: Update when appropriate
-  # coq_latest: '8.20.0'
+  rocq_latest: '8.20.1'
 args:
   BUILD_DATE: '{defaults[build_date]}'
 # propagate:
@@ -44,7 +44,7 @@ images:
   ## rocq/rocq-prover:dev-ocaml-*
   - matrix:
       default: ['4.14.2-flambda']
-      base: ['4.14.2-flambda']
+      base: ['4.14.2-flambda', '4.13.1-flambda', '4.12.1-flambda', '4.09.1-flambda']
       rocq: ['dev']
     build: &build_rocq_dev
       keywords:
@@ -56,7 +56,7 @@ images:
         repo: 'coq/coq'
         branch: 'master'
       args:
-        BASE_TAG: '{matrix[base]}'
+        BASE_TAG: 'rocq_{matrix[base]}'
         ROCQ_VERSION: '{matrix[rocq]}'
         ROCQ_COMMIT: '{defaults[commit]}'
         VCS_REF: '{defaults[commit][0:7]}'
@@ -71,3 +71,36 @@ images:
         # default tag (dev)
         - tag: '{matrix[rocq]}'
           if: '{matrix[base]} == {matrix[default]}'
+  ## rocq/rocq-prover:dev-native
+  - matrix:
+      # TODO: Bump default version
+      default: ['4.14.2']
+      base: ['4.14.2', '4.14.2-flambda']
+      rocq: ['dev']
+    build:
+      <<: *build_rocq_dev
+      # no need for gitlab pipeline trigger after coqorg/coq:dev-native's build
+      # after_deploy: []
+      args:
+        BASE_TAG: 'rocq_{matrix[base]}'
+        ROCQ_VERSION: '{matrix[rocq]}'
+        ROCQ_COMMIT: '{defaults[commit]}'
+        VCS_REF: '{defaults[commit][0:7]}'
+        ROCQ_EXTRA_OPAM: 'rocq-native coq-bignums'
+        ROCQ_INSTALL_SERAPI: ''
+        # as coq-serapi is not kept compatible with rocq.dev for now
+      tags:
+        # full tag
+        - tag: '{matrix[rocq]}-native-ocaml-{matrix[base]}'
+        # abbreviated tag (*-ocaml-4.14)
+        - tag: '{matrix[rocq]}-native-ocaml-{matrix[base][%.*]}'
+          if: '{matrix[base]} == {matrix[default]}'
+        # abbreviated tag (*-ocaml-4.14-flambda)
+        - tag: '{matrix[rocq]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
+          if: '{matrix[base]} != {matrix[default]}'
+        # default tag (dev-native)
+        - tag: '{matrix[rocq]}-native'
+          if: '{matrix[base]} == {matrix[default]}'
+        # default tag (dev-native-flambda)
+        - tag: '{matrix[rocq]}-native-flambda'
+          if: '{matrix[base]} != {matrix[default]}'
