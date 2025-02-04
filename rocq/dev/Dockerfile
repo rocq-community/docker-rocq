@@ -15,8 +15,8 @@ SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 # hadolint ignore=SC2046
 RUN set -x \
   && eval $(opam env "--switch=${COMPILER}" --set-switch) \
-  && opam repository add --all-switches --set-default coq-extra-dev https://coq.inria.fr/opam/extra-dev \
-  && opam repository add --all-switches --set-default coq-core-dev https://coq.inria.fr/opam/core-dev \
+  && opam repository add --all-switches --set-default rocq-extra-dev https://coq.inria.fr/opam/extra-dev \
+  && opam repository add --all-switches --set-default rocq-core-dev https://coq.inria.fr/opam/core-dev \
   && opam update -y -u \
   && opam pin add -n -y -k git rocq-runtime.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
   && opam pin add -n -y -k git rocq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
