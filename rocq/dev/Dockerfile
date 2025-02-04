@@ -1,5 +1,5 @@
 ARG BASE_TAG="latest"
-FROM coqorg/base:${BASE_TAG}
+FROM rocq/base:${BASE_TAG}
 
 ARG ROCQ_EXTRA_OPAM="coq-bignums"
 ENV ROCQ_EXTRA_OPAM="${ROCQ_EXTRA_OPAM}"
@@ -9,7 +9,7 @@ ENV ROCQ_VERSION=${ROCQ_VERSION}
 
 ARG ROCQ_COMMIT
 
-# This line is actually unneeded (was already enabled in coqorg/base)
+# This line is actually unneeded (was already enabled in rocq/base)
 SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 
 # hadolint ignore=SC2046
@@ -26,8 +26,7 @@ RUN set -x \
   && opam pin add -n -y -k git coq.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
   && opam install -y -v -j "${NJOBS}" rocq-runtime rocq-core rocq-prover coqide-server coq-core coq ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
-  # TODO-LATER: Use /home/rocq
-  && chmod -R g=u /home/coq/.opam \
+  && chmod -R g=u /home/rocq/.opam \
   && opam config list && opam list
 
 ARG BUILD_DATE

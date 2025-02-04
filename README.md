@@ -6,11 +6,11 @@
 [![pulls](https://img.shields.io/docker/pulls/rocq/rocq-prover.svg)](https://hub.docker.com/r/rocq/rocq-prover "Number of pulls from Docker Hub")
 [![stars](https://img.shields.io/docker/stars/rocq/rocq-prover.svg)](https://hub.docker.com/r/rocq/rocq-prover "Star the image on Docker Hub")  
 [![dockerfile](https://img.shields.io/badge/dockerfile%20on-gitlab-blue.svg)](https://gitlab.com/coq-community/docker-rocq "Dockerfile source repository")
-[![base](https://img.shields.io/badge/depends%20on-coqorg%2Fbase-blue.svg)](https://hub.docker.com/r/coqorg/base "Docker base image for Rocq")
+[![base](https://img.shields.io/badge/depends%20on-rocq%2Fbase-blue.svg)](https://hub.docker.com/r/rocq/base "Docker base image for Rocq")
 
 This repository provides [Docker](https://www.docker.com/) images of the [Rocq Prover](https://rocq-prover.org/).
 
-These images are based on [this parent image](https://hub.docker.com/r/coqorg/base/), itself based on [Debian 12 Slim](https://hub.docker.com/_/debian/) and relying on [opam 2.0](https://opam.ocaml.org/doc/Manual.html).
+These images are based on [this parent image](https://hub.docker.com/r/rocq/base/), itself based on [Debian 12 Slim](https://hub.docker.com/_/debian/) and relying on [opam 2.0](https://opam.ocaml.org/doc/Manual.html).
 
 <!-- TODO gh-action..debian tabular -->
 
