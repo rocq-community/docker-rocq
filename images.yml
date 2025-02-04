@@ -60,7 +60,7 @@ images:
         ROCQ_VERSION: '{matrix[rocq]}'
         ROCQ_COMMIT: '{defaults[commit]}'
         VCS_REF: '{defaults[commit][0:7]}'
-        ROCQ_EXTRA_OPAM: 'coq-bignums'
+        ROCQ_EXTRA_OPAM: 'rocq-bignums'
       tags:
         # full tag
         - tag: '{matrix[rocq]}-ocaml-{matrix[base]}'
@@ -84,7 +84,7 @@ images:
         ROCQ_VERSION: '{matrix[rocq]}'
         ROCQ_COMMIT: '{defaults[commit]}'
         VCS_REF: '{defaults[commit][0:7]}'
-        ROCQ_EXTRA_OPAM: 'rocq-native coq-bignums'
+        ROCQ_EXTRA_OPAM: 'rocq-native rocq-bignums'
       tags:
         # full tag
         - tag: '{matrix[rocq]}-native-ocaml-{matrix[base]}'
@@ -116,7 +116,7 @@ images:
         BASE_TAG: 'rocq_{matrix[base]}'
         ROCQ_VERSION: '{matrix[rocq][//-/+]}'
         VCS_REF: 'V{matrix[rocq][//-/+]}'
-        ROCQ_EXTRA_OPAM: 'coq-bignums'
+        ROCQ_EXTRA_OPAM: 'rocq-bignums'
         # +- rocq-native
       tags:
         # full tag
@@ -140,7 +140,7 @@ images:
         BASE_TAG: 'rocq_{matrix[base]}'
         ROCQ_VERSION: '{matrix[rocq][//-/+]}'
         VCS_REF: 'V{matrix[rocq][//-/+]}'
-        ROCQ_EXTRA_OPAM: 'rocq-native coq-bignums'
+        ROCQ_EXTRA_OPAM: 'rocq-native rocq-bignums'
         # +- rocq-native
       tags:
         # full tag
@@ -194,8 +194,8 @@ images:
   #       # TODO: Replace when the rc is tagged
   #       VCS_REF: '{defaults[commit][0:7]}'
   #       # VCS_REF: 'V{matrix[coq][//-/+]}'
-  #       COQ_EXTRA_OPAM: 'coq-bignums'
-  #       # +- coq-native
+  #       COQ_EXTRA_OPAM: 'rocq-bignums'
+  #       # +- rocq-native
   #       # TODO: Replace when the rc is tagged
   #       COQ_INSTALL_SERAPI: 'false'
   #       # COQ_INSTALL_SERAPI: 'true'
@@ -231,8 +231,8 @@ images:
   #       # TODO: Replace when the rc is tagged
   #       VCS_REF: '{defaults[commit][0:7]}'
   #       # VCS_REF: 'V{matrix[coq][//-/+]}'
-  #       COQ_EXTRA_OPAM: 'coq-native coq-bignums'
-  #       # +- coq-native
+  #       COQ_EXTRA_OPAM: 'rocq-native rocq-bignums'
+  #       # +- rocq-native
   #       # TODO: Replace when the rc is tagged
   #       COQ_INSTALL_SERAPI: 'false'
   #       # COQ_INSTALL_SERAPI: 'true'

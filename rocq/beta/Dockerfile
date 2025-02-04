@@ -1,7 +1,7 @@
 ARG BASE_TAG="latest"
 FROM rocq/base:${BASE_TAG}
 
-ARG ROCQ_EXTRA_OPAM="coq-bignums"
+ARG ROCQ_EXTRA_OPAM="rocq-bignums"
 ENV ROCQ_EXTRA_OPAM="${ROCQ_EXTRA_OPAM}"
 
 ARG ROCQ_VERSION="dev"
