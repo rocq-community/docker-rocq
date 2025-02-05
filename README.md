@@ -20,7 +20,7 @@ This Dockerfile repository is [mirrored on GitLab](https://gitlab.com/coq-commun
 
 > [!NOTE]
 >
-> Note that this repository only contain Docker images for the Rocq Prover ≥ 9.0.
+> Note that this repository only contain Docker images for the Rocq Prover ≥ 9.0.  
 > For earlier versions of the Coq Proof Assistant ≤ 8.20.1, use [coqorg/coq](https://hub.docker.com/r/coqorg/coq) images instead.
 
 <!-- tags -->
