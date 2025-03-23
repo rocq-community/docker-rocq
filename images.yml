@@ -84,7 +84,7 @@ images:
         ROCQ_VERSION: '{matrix[rocq]}'
         ROCQ_COMMIT: '{defaults[commit]}'
         VCS_REF: '{defaults[commit][0:7]}'
-        ROCQ_EXTRA_OPAM: 'rocq-native rocq-bignums'
+        ROCQ_EXTRA_OPAM: 'rocq-native coq-native rocq-bignums'
       tags:
         # full tag
         - tag: '{matrix[rocq]}-native-ocaml-{matrix[base]}'
