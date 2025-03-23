@@ -4,7 +4,7 @@ active: true
 docker_repo: 'rocq/rocq-prover'
 vars:
   # TODO: Update when appropriate
-  rocq_latest: '8.20.1'
+  rocq_latest: '9.0.0'
 args:
   BUILD_DATE: '{defaults[build_date]}'
 # propagate:
@@ -101,55 +101,67 @@ images:
         - tag: '{matrix[rocq]}-native-flambda'
           if: '{matrix[base]} != {matrix[default]}'
   ################################################################
-  ## rocq/rocq-prover:9.0-rc1
+  ## rocq/rocq-prover:9.0.0
+  ## rocq/rocq-prover:latest
   - matrix:
       default: ['4.14.2-flambda']
       # only *-flambda switches
       base: ['4.14.2-flambda', '4.13.1-flambda', '4.12.1-flambda', '4.09.1-flambda']
-      rocq: ['9.0-rc1']
-    build: &build_rocq_alpha
+      rocq: ['9.0.0']
+    build: &build_rocq_stable
       context: './rocq'
-      dockerfile: './beta/Dockerfile'
+      dockerfile: './stable/Dockerfile'
       keywords:
-        - '{matrix[rocq][%-*]}'
+        - '{matrix[rocq][%.*]}'
       args:
         BASE_TAG: 'rocq_{matrix[base]}'
-        ROCQ_VERSION: '{matrix[rocq][//-/+]}'
-        VCS_REF: 'V{matrix[rocq][//-/+]}'
+        ROCQ_VERSION: '{matrix[rocq]}'
+        VCS_REF: 'V{matrix[rocq]}'
         ROCQ_EXTRA_OPAM: 'rocq-bignums'
         # +- rocq-native
       tags:
         # full tag
         - tag: '{matrix[rocq]}-ocaml-{matrix[base]}'
         # abbreviated tag (*-ocaml-4.14-flambda)
-        - tag: '{matrix[rocq][%-*]}-ocaml-{matrix[base][%.*-*]}-flambda'
-        # default tag (9.0-alpha)
+        - tag: '{matrix[rocq][%.*]}-ocaml-{matrix[base][%.*-*]}-flambda'
+        # default tag (9.0.0)
         - tag: '{matrix[rocq]}'
           if: '{matrix[base]} == {matrix[default]}'
         # abbreviated tag (9.0)
-        - tag: '{matrix[rocq][%-*]}'
+        - tag: '{matrix[rocq][%.*]}'
           if: '{matrix[base]} == {matrix[default]}'
-   # rocq/rocq-prover:9.0-rc1-native
+        # latest-abbreviated tag (*-ocaml-4.14-flambda)
+        - tag: 'latest-ocaml-{matrix[base][%.*-*]}-flambda'
+          if:
+            - '{matrix[rocq]} == {vars[rocq_latest]}'
+        # latest tag
+        - tag: 'latest'
+          if:
+            - '{matrix[rocq]} == {vars[rocq_latest]}'
+            - '{matrix[base]} == {matrix[default]}'
+  ## rocq/rocq-prover:9.0.0-native
+  ## rocq/rocq-prover:latest-native-flambda
+  ## rocq/rocq-prover:latest-native
   - matrix:
       default: ['4.14.2']
       base: ['4.14.2', '4.14.2-flambda']
-      rocq: ['9.0-rc1']
-    build:
-      <<: *build_rocq_alpha
+      rocq: ['9.0.0']
+    build: &build_rocq_stable_native
+      <<: *build_rocq_stable
       args:
         BASE_TAG: 'rocq_{matrix[base]}'
-        ROCQ_VERSION: '{matrix[rocq][//-/+]}'
-        VCS_REF: 'V{matrix[rocq][//-/+]}'
-        ROCQ_EXTRA_OPAM: 'rocq-native rocq-bignums'
+        ROCQ_VERSION: '{matrix[rocq]}'
+        VCS_REF: 'V{matrix[rocq]}'
+        ROCQ_EXTRA_OPAM: 'rocq-native coq-native rocq-bignums'
         # +- rocq-native
       tags:
         # full tag
         - tag: '{matrix[rocq]}-native-ocaml-{matrix[base]}'
         # abbreviated tag (*-ocaml-4.14)
-        - tag: '{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*]}'
+        - tag: '{matrix[rocq][%.*]}-native-ocaml-{matrix[base][%.*]}'
           if: '{matrix[base]} == {matrix[default]}'
         # abbreviated tag (*-ocaml-4.14-flambda)
-        - tag: '{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
+        - tag: '{matrix[rocq][%.*]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
           if: '{matrix[base]} != {matrix[default]}' # -flambda
         # default tag (9.0-alpha-native)
         - tag: '{matrix[rocq]}-native'
@@ -158,11 +170,30 @@ images:
         - tag: '{matrix[rocq]}-native-flambda'
           if: '{matrix[base]} != {matrix[default]}' # -flambda
         # abbreviated tag (9.0-native)
-        - tag: '{matrix[rocq][%-*]}-native'
+        - tag: '{matrix[rocq][%.*]}-native'
           if: '{matrix[base]} == {matrix[default]}'
         # abbreviated tag (9.0-native-flambda)
-        - tag: '{matrix[rocq][%-*]}-native-flambda'
+        - tag: '{matrix[rocq][%.*]}-native-flambda'
           if: '{matrix[base]} != {matrix[default]}' # -flambda
+        # latest-abbreviated tag (latest-native-ocaml-4.13)
+        - tag: 'latest-native-ocaml-{matrix[base][%.*]}'
+          if:
+            - '{matrix[rocq]} == {vars[rocq_latest]}'
+            - '{matrix[base]} == {matrix[default]}'
+        # latest-abbreviated tag (latest-native-ocaml-4.13-flambda)
+        - tag: 'latest-native-ocaml-{matrix[base][%.*]}-flambda'
+          if:
+            - '{matrix[rocq]} == {vars[rocq_latest]}'
+            - '{matrix[base]} != {matrix[default]}' # -flambda
+        # latest tag
+        - tag: 'latest-native'
+          if:
+            - '{matrix[rocq]} == {vars[rocq_latest]}'
+            - '{matrix[base]} == {matrix[default]}'
+        - tag: 'latest-native-flambda'
+          if:
+            - '{matrix[rocq]} == {vars[rocq_latest]}'
+            - '{matrix[base]} != {matrix[default]}' # -flambda
   ################################################################
   # TODO: Uncomment when the v8.21 branch is created
   ## coqorg/coq:8.21-alpha
