@@ -16,11 +16,11 @@ RUN set -x \
   && opam update -y -u \
   && opam pin add -n -k version rocq-stdlib ${ROCQ_VERSION} \
   && opam pin add -n -k version rocq-prover ${ROCQ_VERSION} \
-  # WE NEED NOT pin rocq-core nor rocq-runtime
+  # We need not pin rocq-core nor rocq-runtime
   # as rocq-prover => "rocq-core" {= version}
   # and rocq-core => "rocq-runtime" {= version}
   && opam pin add -n -k version coqide-server ${ROCQ_VERSION} \
-  # WE DON'T install coq-core nor coq as they're transitional pkgs whose install time is negligible
+  # We don't install coq-core nor coq as they're transitional pkgs whose install time is negligible
   && opam install -y -v -j "${NJOBS}" rocq-prover coqide-server ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
   && chmod -R g=u /home/rocq/.opam \
