@@ -7,38 +7,40 @@ vars:
   rocq_latest: '9.0.0'
 args:
   BUILD_DATE: '{defaults[build_date]}'
-# propagate:
-#   mathcomp:
-#     api_token_env_var: 'DMC_TOKEN'
-#     gitlab_domain: 'gitlab.inria.fr'
-#     gitlab_project: '44938'
-#     strategy:
-#       - when: 'rebuild-all'
-#         mode: 'rebuild-all'
-#       - when: 'forall'
-#         expr: '{matrix[rocq][//pl/.][%.*]}'
-#         subset: '8.4,8.5'
-#         mode: 'nil'
-#       - # when OPTIONAL for last rule
-#         mode: 'rebuild-keyword'
-#         item: '{keywords[/#/,][#,]}'
-#   mathcomp-dev:
-#     api_token_env_var: 'MC_TOKEN'
-#     gitlab_domain: 'gitlab.inria.fr'
-#     gitlab_project: '44939'
-#     strategy:
-#       - when: 'rebuild-all'
-#         mode: 'minimal'
-#       - when: 'forall'
-#         expr: '{matrix[rocq]}'
-#         subset: 'dev'
-#         mode: 'nightly'
-#       - when: 'exists'
-#         expr: '{matrix[rocq][//pl/.][%.*]}'
-#         subset: '8.18,8.19,8.20,dev'
-#         mode: 'minimal'
-#       - # when OPTIONAL for last rule
-#         mode: 'nil'
+propagate:
+  mathcomp:
+    api_token_env_var: 'DMC_TOKEN'
+    gitlab_domain: 'gitlab.inria.fr'
+    gitlab_project: '44938'
+    strategy:
+      - when: 'rebuild-all'
+        mode: 'rebuild-all'
+      # to uncomment when some Rocq versions will become unsupported by MathComp
+      # - when: 'forall'
+      #   expr: '{matrix[rocq][%.*]}'
+      #   subset: '9.0'
+      #   mode: 'nil'
+      - # when OPTIONAL for last rule
+        mode: 'rebuild-keyword'
+        item: '{keywords[/#/,][#,]}'
+  mathcomp-dev:
+    api_token_env_var: 'MC_TOKEN'
+    gitlab_domain: 'gitlab.inria.fr'
+    gitlab_project: '44939'
+    strategy:
+      - when: 'rebuild-all'
+        mode: 'minimal'
+      - when: 'forall'
+        expr: '{matrix[rocq]}'
+        subset: 'dev'
+        mode: 'nightly'
+      - when: 'exists'
+        expr: '{matrix[rocq][%.*]}'
+        # TODO: add new versions of Rocq here
+        subset: '9.0,dev'
+        mode: 'minimal'
+      - # when OPTIONAL for last rule
+        mode: 'nil'
 images:
   ## rocq/rocq-prover:dev
   ## rocq/rocq-prover:dev-ocaml-*
