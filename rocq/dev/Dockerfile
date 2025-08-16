@@ -15,14 +15,14 @@ SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 # hadolint ignore=SC2046
 RUN set -x \
   && eval $(opam env "--switch=${COMPILER}" --set-switch) \
-  && opam repository add --all-switches --set-default rocq-extra-dev https://coq.inria.fr/opam/extra-dev \
-  && opam repository add --all-switches --set-default rocq-core-dev https://coq.inria.fr/opam/core-dev \
+  && opam repository add --all-switches --set-default rocq-extra-dev https://rocq-prover.org/opam/extra-dev \
+  && opam repository add --all-switches --set-default rocq-core-dev https://rocq-prover.org/opam/core-dev \
   && opam update -y -u \
-  && opam pin add -n -y -k git rocq-runtime.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git rocq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git coqide-server.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git coq-core.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
-  && opam pin add -n -y -k git coq.${ROCQ_VERSION} "git+https://github.com/coq/coq#${ROCQ_COMMIT}" \
+  && opam pin add -n -y -k git rocq-runtime.${ROCQ_VERSION} "git+https://github.com/rocq-prover/rocq#${ROCQ_COMMIT}" \
+  && opam pin add -n -y -k git rocq-core.${ROCQ_VERSION} "git+https://github.com/rocq-prover/rocq#${ROCQ_COMMIT}" \
+  && opam pin add -n -y -k git coqide-server.${ROCQ_VERSION} "git+https://github.com/rocq-prover/rocq#${ROCQ_COMMIT}" \
+  && opam pin add -n -y -k git coq-core.${ROCQ_VERSION} "git+https://github.com/rocq-prover/rocq#${ROCQ_COMMIT}" \
+  && opam pin add -n -y -k git coq.${ROCQ_VERSION} "git+https://github.com/rocq-prover/rocq#${ROCQ_COMMIT}" \
   && opam install -y -v -j "${NJOBS}" rocq-runtime rocq-core rocq-prover coqide-server coq-core coq ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
   && chmod -R g=u /home/rocq/.opam \
@@ -35,7 +35,7 @@ LABEL org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.description="Rocq is a formal proof management system. It provides a formal language to write mathematical definitions, executable algorithms and theorems together with an environment for semi-interactive development of machine-checked proofs." \
   org.label-schema.url="https://rocq-prover.org/" \
   org.label-schema.vcs-ref=${VCS_REF} \
-  org.label-schema.vcs-url="https://github.com/coq/coq" \
+  org.label-schema.vcs-url="https://github.com/rocq-prover/rocq" \
   org.label-schema.vendor="The Rocq Development Team" \
   org.label-schema.version=${ROCQ_VERSION} \
   org.label-schema.schema-version="1.0" \
