@@ -55,7 +55,7 @@ images:
       dockerfile: './dev/Dockerfile'
       commit_api:
         fetcher: 'github'
-        repo: 'coq/coq'
+        repo: 'rocq-prover/rocq'
         branch: 'master'
       args:
         BASE_TAG: 'rocq_{matrix[base]}'
@@ -103,6 +103,101 @@ images:
         - tag: '{matrix[rocq]}-native-flambda'
           if: '{matrix[base]} != {matrix[default]}'
   ################################################################
+  # TODO: Uncomment when the v9.1 branch is created
+  ## rocq/rocq-prover:9.1-alpha
+  # - matrix:
+  #     default: ['4.14.2-flambda']
+  #     # only *-flambda switches
+  #     base: ['4.14.2-flambda']
+  #     # TODO: Bump to 9.1-rc1 when appropriate
+  #     rocq: ['9.1-alpha']
+  #   build: &build_rocq_edge
+  #     # TODO: Remove this commit_api section when the rc is tagged
+  #     commit_api:
+  #       fetcher: 'github'
+  #       repo: 'rocq-prover/rocq'
+  #       branch: 'v9.1'
+  #     context: './rocq'
+  #     # TODO: Replace when the rc is tagged
+  #     dockerfile: './dev/Dockerfile'
+  #     # dockerfile: './beta/Dockerfile'
+  #     keywords:
+  #       # TODO: replace when the rc is tagged
+  #       - '{matrix[rocq][%-alpha]}'
+  #       # - '{matrix[rocq][%-*]}'
+  #     args:
+  #       BASE_TAG: 'rocq_{matrix[base]}'
+  #       ROCQ_VERSION: '{matrix[rocq][//-/+]}'
+  #       # TODO: Remove ROCQ_COMMIT when the rc is tagged
+  #       ROCQ_COMMIT: '{defaults[commit]}'
+  #       # TODO: Replace when the rc is tagged
+  #       VCS_REF: '{defaults[commit][0:7]}'
+  #       # VCS_REF: 'V{matrix[rocq][//-/+]}'
+  #       ROCQ_EXTRA_OPAM: 'rocq-bignums'
+  #       # TODO: Replace when the rc is tagged
+  #     tags:
+  #       # full tag
+  #       - tag: '{matrix[rocq]}-ocaml-{matrix[base]}'
+  #       # abbreviated tag (*-ocaml-4.14-flambda)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[rocq][%-alpha]}-ocaml-{matrix[base][%.*-*]}-flambda'
+  #       # - tag: '{matrix[rocq][%-*]}-ocaml-{matrix[base][%.*-*]}-flambda'
+  #       # default tag (9.1-alpha)
+  #       - tag: '{matrix[rocq]}'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # abbreviated tag (9.1)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[rocq][%-alpha]}'
+  #       # - tag: '{matrix[rocq][%-*]}'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  ## rocq/rocq-prover:9.1-alpha-native
+  # - matrix:
+  #     default: ['4.14.2']
+  #     base: ['4.14.2', '4.14.2-flambda']
+  #     # TODO: Bump to 9.1-rc1 when appropriate
+  #     rocq: ['9.1-alpha']
+  #   build:
+  #     <<: *build_rocq_edge
+  #     args:
+  #       BASE_TAG: 'rocq_{matrix[base]}'
+  #       ROCQ_VERSION: '{matrix[rocq][//-/+]}'
+  #       # TODO: Remove ROCQ_COMMIT when the rc is tagged
+  #       ROCQ_COMMIT: '{defaults[commit]}'
+  #       # TODO: Replace when the rc is tagged
+  #       VCS_REF: '{defaults[commit][0:7]}'
+  #       # VCS_REF: 'V{matrix[rocq][//-/+]}'
+  #       ROCQ_EXTRA_OPAM: 'rocq-native coq-native rocq-bignums'
+  #       # TODO: Replace when the rc is tagged
+  #     tags:
+  #       # full tag
+  #       - tag: '{matrix[rocq]}-native-ocaml-{matrix[base]}'
+  #       # abbreviated tag (*-ocaml-4.14)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[rocq][%-alpha]}-native-ocaml-{matrix[base][%.*]}'
+  #       # - tag: '{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*]}'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # abbreviated tag (*-ocaml-4.14-flambda)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[rocq][%-alpha]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
+  #       # - tag: '{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
+  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
+  #       # default tag (9.1-alpha-native)
+  #       - tag: '{matrix[rocq]}-native'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # default tag (9.1-alpha-native-flambda)
+  #       - tag: '{matrix[rocq]}-native-flambda'
+  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
+  #       # abbreviated tag (9.1-native)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[rocq][%-alpha]}-native'
+  #       # - tag: '{matrix[rocq][%-*]}-native'
+  #         if: '{matrix[base]} == {matrix[default]}'
+  #       # abbreviated tag (9.1-native-flambda)
+  #       # TODO: Replace when the rc is tagged
+  #       - tag: '{matrix[rocq][%-alpha]}-native-flambda'
+  #       # - tag: '{matrix[rocq][%-*]}-native-flambda'
+  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
+  ##############################################################
   ## rocq/rocq-prover:9.0.0
   ## rocq/rocq-prover:latest
   - matrix:
@@ -196,107 +291,3 @@ images:
           if:
             - '{matrix[rocq]} == {vars[rocq_latest]}'
             - '{matrix[base]} != {matrix[default]}' # -flambda
-  ################################################################
-  # TODO: Uncomment when the v8.21 branch is created
-  ## coqorg/coq:8.21-alpha
-  # - matrix:
-  #     default: ['4.13.1-flambda']
-  #     # only *-flambda switches
-  #     base: ['4.14.2-flambda', '4.13.1-flambda', '4.12.1-flambda', '4.09.1-flambda']
-  #     # TODO: Bump to 8.21-rc1 when appropriate
-  #     coq: ['8.21-alpha']
-  #   build: &build_coq_alpha
-  #     # TODO: Remove this commit_api section when the rc is tagged
-  #     commit_api:
-  #       fetcher: 'github'
-  #       repo: 'coq/coq'
-  #       branch: 'v8.21'
-  #     context: './coq'
-  #     # TODO: Replace when the rc is tagged
-  #     dockerfile: './dev/Dockerfile'
-  #     # dockerfile: './beta/Dockerfile'
-  #     keywords:
-  #       # TODO: replace when the rc is tagged
-  #       - '{matrix[coq][%-alpha]}'
-  #       # - '{matrix[coq][%-*]}'
-  #     args:
-  #       BASE_TAG: 'coq_{matrix[base]}'
-  #       COQ_VERSION: '{matrix[coq][//-/+]}'
-  #       # TODO: Remove COQ_COMMIT when the rc is tagged
-  #       COQ_COMMIT: '{defaults[commit]}'
-  #       # TODO: Replace when the rc is tagged
-  #       VCS_REF: '{defaults[commit][0:7]}'
-  #       # VCS_REF: 'V{matrix[coq][//-/+]}'
-  #       COQ_EXTRA_OPAM: 'rocq-bignums'
-  #       # +- rocq-native
-  #       # TODO: Replace when the rc is tagged
-  #       COQ_INSTALL_SERAPI: 'false'
-  #       # COQ_INSTALL_SERAPI: 'true'
-  #       # (or any nonempty string) as coq-serapi supports ocaml 4.07.1+
-  #     tags:
-  #       # full tag
-  #       - tag: '{matrix[coq]}-ocaml-{matrix[base]}'
-  #       # abbreviated tag (*-ocaml-4.13-flambda)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[coq][%-alpha]}-ocaml-{matrix[base][%.*-*]}-flambda'
-  #       # - tag: '{matrix[coq][%-*]}-ocaml-{matrix[base][%.*-*]}-flambda'
-  #       # default tag (8.21-alpha)
-  #       - tag: '{matrix[coq]}'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # abbreviated tag (8.21)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[coq][%-alpha]}'
-  #       # - tag: '{matrix[coq][%-*]}'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  ## coqorg/coq:8.21-alpha-native
-  # - matrix:
-  #     default: ['4.13.1']
-  #     base: ['4.13.1', '4.13.1-flambda']
-  #     # TODO: Bump to 8.21-rc1 when appropriate
-  #     coq: ['8.21-alpha']
-  #   build:
-  #     <<: *build_coq_alpha
-  #     args:
-  #       BASE_TAG: 'coq_{matrix[base]}'
-  #       COQ_VERSION: '{matrix[coq][//-/+]}'
-  #       # TODO: Remove COQ_COMMIT when the rc is tagged
-  #       COQ_COMMIT: '{defaults[commit]}'
-  #       # TODO: Replace when the rc is tagged
-  #       VCS_REF: '{defaults[commit][0:7]}'
-  #       # VCS_REF: 'V{matrix[coq][//-/+]}'
-  #       COQ_EXTRA_OPAM: 'rocq-native rocq-bignums'
-  #       # +- rocq-native
-  #       # TODO: Replace when the rc is tagged
-  #       COQ_INSTALL_SERAPI: 'false'
-  #       # COQ_INSTALL_SERAPI: 'true'
-  #       # (or any nonempty string) as coq-serapi supports ocaml 4.07.1+
-  #     tags:
-  #       # full tag
-  #       - tag: '{matrix[coq]}-native-ocaml-{matrix[base]}'
-  #       # abbreviated tag (*-ocaml-4.13)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[coq][%-alpha]}-native-ocaml-{matrix[base][%.*]}'
-  #       # - tag: '{matrix[coq][%-*]}-native-ocaml-{matrix[base][%.*]}'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # abbreviated tag (*-ocaml-4.13-flambda)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[coq][%-alpha]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
-  #       # - tag: '{matrix[coq][%-*]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
-  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
-  #       # default tag (8.21-alpha-native)
-  #       - tag: '{matrix[coq]}-native'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # default tag (8.21-alpha-native-flambda)
-  #       - tag: '{matrix[coq]}-native-flambda'
-  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
-  #       # abbreviated tag (8.21-native)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[coq][%-alpha]}-native'
-  #       # - tag: '{matrix[coq][%-*]}-native'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # abbreviated tag (8.21-native-flambda)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[coq][%-alpha]}-native-flambda'
-  #       # - tag: '{matrix[coq][%-*]}-native-flambda'
-  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
-  ################################################################
