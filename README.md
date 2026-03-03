@@ -12,12 +12,12 @@ This repository provides [Docker](https://www.docker.com/) images of the [Rocq P
 
 These images are based on [this parent image](https://hub.docker.com/r/rocq/base/), itself based on [Debian 12 Slim](https://hub.docker.com/_/debian/) and relying on the last version of [opam 2.x](https://opam.ocaml.org/doc/Manual.html):
 
-|     | GitHub repo                                                             | Type          | Docker Hub                                                       |
-| --- | ----------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
-|     | [docker-coq-action](https://github.com/coq-community/docker-coq-action) | GitHub Action | N/A                                                              |
-| ⊙   | [docker-rocq](https://github.com/coq-community/docker-rocq)             | Dockerfile    | [`rocq/rocq-prover`](https://hub.docker.com/r/rocq/rocq-prover/) |
-| ↳   | [docker-base](https://github.com/coq-community/docker-base)             | Dockerfile    | [`rocq/base`](https://hub.docker.com/r/rocq/base/)               |
-| ↳   | Debian                                                                  | Linux distro  | [`debian`](https://hub.docker.com/_/debian/)                     |
+|   | GitHub repo                                                             | Type          | Docker Hub                                                       |
+|---|-------------------------------------------------------------------------|---------------|------------------------------------------------------------------|
+|   | [docker-coq-action](https://github.com/coq-community/docker-coq-action) | GitHub Action | N/A                                                              |
+| ⊙ | [docker-rocq](https://github.com/coq-community/docker-rocq)             | Dockerfile    | [`rocq/rocq-prover`](https://hub.docker.com/r/rocq/rocq-prover/) |
+| ↳ | [docker-base](https://github.com/coq-community/docker-base)             | Dockerfile    | [`rocq/base`](https://hub.docker.com/r/rocq/base/)               |
+| ↳ | Debian                                                                  | Linux distro  | [`debian`](https://hub.docker.com/_/debian/)                     |
 
 See also the [docker-coq wiki](https://github.com/coq-community/docker-coq/wiki) for details about how to use such images locally or in a CI context.
 
@@ -31,20 +31,7 @@ This Dockerfile repository is [mirrored on GitLab](https://gitlab.com/coq-commun
 > [!TIP]
 >
 > For most use cases, the tags `9.1` (release version) and `dev` (development version) are the most relevant.  
-> Indeed, we recommend to omit the patchlevel field (using `9.1` instead of `9.1-rc1` or `9.1.1`) in your CI,  
+> Indeed, we recommend to omit the patchlevel field (using `9.1` instead of `9.1-rc1` or `9.1.0`) in your CI,  
 > so that you need not change the chosen Docker tag when a new patchlevel version of the Rocq Prover is released.
 
-# <a name="supported-tags"></a>Supported tags and respective `Dockerfile` links
-
-- [`dev-ocaml-4.14.2-flambda`, `dev-ocaml-4.14-flambda`, `dev`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/dev/Dockerfile)
-- [`dev-native-ocaml-4.14.2`, `dev-native-ocaml-4.14`, `dev-native`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/dev/Dockerfile)
-- [`dev-native-ocaml-4.14.2-flambda`, `dev-native-ocaml-4.14-flambda`, `dev-native-flambda`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/dev/Dockerfile)
-- [`9.1.1-ocaml-4.14.2-flambda`, `9.1-ocaml-4.14-flambda`, `9.1.1`, `9.1`, `latest-ocaml-4.14-flambda`, `latest`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.1.1-native-ocaml-4.14.2`, `9.1-native-ocaml-4.14`, `9.1.1-native`, `9.1-native`, `latest-native-ocaml-4.14`, `latest-native`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.1.1-native-ocaml-4.14.2-flambda`, `9.1-native-ocaml-4.14-flambda`, `9.1.1-native-flambda`, `9.1-native-flambda`, `latest-native-ocaml-4.14-flambda`, `latest-native-flambda`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.0.1-ocaml-4.14.2-flambda`, `9.0-ocaml-4.14-flambda`, `9.0.1`, `9.0`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.0.1-ocaml-4.13.1-flambda`, `9.0-ocaml-4.13-flambda`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.0.1-ocaml-4.12.1-flambda`, `9.0-ocaml-4.12-flambda`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.0.1-ocaml-4.09.1-flambda`, `9.0-ocaml-4.09-flambda`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.0.1-native-ocaml-4.14.2`, `9.0-native-ocaml-4.14`, `9.0.1-native`, `9.0-native`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
-- [`9.0.1-native-ocaml-4.14.2-flambda`, `9.0-native-ocaml-4.14-flambda`, `9.0.1-native-flambda`, `9.0-native-flambda`](https://gitlab.com/coq-community/docker-rocq/blob/master/rocq/stable/Dockerfile)
+<!-- tags -->
