@@ -12,12 +12,12 @@ This repository provides [Docker](https://www.docker.com/) images of the [Rocq P
 
 These images are based on [this parent image](https://hub.docker.com/r/rocq/base/), itself based on [Debian 12 Slim](https://hub.docker.com/_/debian/) and relying on the last version of [opam 2.x](https://opam.ocaml.org/doc/Manual.html):
 
-|   | GitHub repo                                                             | Type          | Docker Hub                                                       |
-|---|-------------------------------------------------------------------------|---------------|------------------------------------------------------------------|
-|   | [docker-coq-action](https://github.com/coq-community/docker-coq-action) | GitHub Action | N/A                                                              |
-| ⊙ | [docker-rocq](https://github.com/coq-community/docker-rocq)             | Dockerfile    | [`rocq/rocq-prover`](https://hub.docker.com/r/rocq/rocq-prover/) |
-| ↳ | [docker-base](https://github.com/coq-community/docker-base)             | Dockerfile    | [`rocq/base`](https://hub.docker.com/r/rocq/base/)               |
-| ↳ | Debian                                                                  | Linux distro  | [`debian`](https://hub.docker.com/_/debian/)                     |
+|     | GitHub repo                                                             | Type          | Docker Hub                                                       |
+| --- | ----------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
+|     | [docker-coq-action](https://github.com/coq-community/docker-coq-action) | GitHub Action | N/A                                                              |
+| ⊙   | [docker-rocq](https://github.com/coq-community/docker-rocq)             | Dockerfile    | [`rocq/rocq-prover`](https://hub.docker.com/r/rocq/rocq-prover/) |
+| ↳   | [docker-base](https://github.com/coq-community/docker-base)             | Dockerfile    | [`rocq/base`](https://hub.docker.com/r/rocq/base/)               |
+| ↳   | Debian                                                                  | Linux distro  | [`debian`](https://hub.docker.com/_/debian/)                     |
 
 See also the [docker-coq wiki](https://github.com/coq-community/docker-coq/wiki) for details about how to use such images locally or in a CI context.
 
@@ -30,8 +30,8 @@ This Dockerfile repository is [mirrored on GitLab](https://gitlab.com/coq-commun
 
 > [!TIP]
 >
-> For most use cases, the tags `9.1` (release version) and `dev` (development version) are the most relevant.  
-> Indeed, we recommend to omit the patchlevel field (using `9.1` instead of `9.1-rc1` or `9.1.0`) in your CI,  
+> For most use cases, the tags `9.X` (release version) and `dev` (development version) are the most relevant.
+> Indeed, we recommend to omit the patchlevel field (using `9.X` instead of `9.X-rc1` or `9.X.0`) in your CI,
 > so that you need not change the chosen Docker tag when a new patchlevel version of the Rocq Prover is released.
 
 <!-- tags -->
