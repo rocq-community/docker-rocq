@@ -4,7 +4,7 @@ active: true
 docker_repo: "rocq/rocq-prover"
 vars:
   # TODO: Update when appropriate
-  rocq_latest: "9.1.0"
+  rocq_latest: "9.1.1"
   rocq_stdlib: "9.0.0"
 args:
   BUILD_DATE: "{defaults[build_date]}"
@@ -162,13 +162,13 @@ images:
         # abbreviated tag (9.2-native-flambda)
         - tag: "{matrix[rocq][%-*]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}" # -flambda
-  ## rocq/rocq-prover:9.1.0
+  ## rocq/rocq-prover:9.1.1
   ## rocq/rocq-prover:latest
   - matrix:
       default: ["4.14.2-flambda"]
       # only *-flambda switches
       base: ["4.14.2-flambda"]
-      rocq: ["9.1.0"]
+      rocq: ["9.1.1"]
     build: &build_rocq_stable
       context: "./rocq"
       dockerfile: "./stable/Dockerfile"
@@ -201,13 +201,13 @@ images:
           if:
             - "{matrix[rocq]} == {vars[rocq_latest]}"
             - "{matrix[base]} == {matrix[default]}"
-  ## rocq/rocq-prover:9.1.0-native
+  ## rocq/rocq-prover:9.1.1-native
   ## rocq/rocq-prover:latest-native-flambda
   ## rocq/rocq-prover:latest-native
   - matrix:
       default: ["4.14.2"]
       base: ["4.14.2", "4.14.2-flambda"]
-      rocq: ["9.1.0"]
+      rocq: ["9.1.1"]
     build: &build_rocq_stable_native
       <<: *build_rocq_stable
       args:
