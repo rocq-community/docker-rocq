@@ -74,7 +74,6 @@ images:
           if: "{matrix[base]} == {matrix[default]}"
   ## rocq/rocq-prover:dev-native
   - matrix:
-      # TODO: Bump default version
       default: ["4.14.2"]
       base: ["4.14.2", "4.14.2-flambda"]
       rocq: ["dev"]
@@ -103,100 +102,66 @@ images:
         # default tag (dev-native-flambda)
         - tag: "{matrix[rocq]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}"
-  ################################################################
-  # TODO: Uncomment when the v9.2 branch is created
-  ## rocq/rocq-prover:9.2-alpha
-  # - matrix:
-  #     default: ['4.14.2-flambda']
-  #     # only *-flambda switches
-  #     base: ['4.14.2-flambda']
-  #     # TODO: Bump to 9.2-rc1 when appropriate
-  #     rocq: ['9.2-alpha']
-  #   build: &build_rocq_edge
-  #     # TODO: Remove this commit_api section when the rc is tagged
-  #     commit_api:
-  #       fetcher: 'github'
-  #       repo: 'rocq-prover/rocq'
-  #       branch: 'v9.2'
-  #     context: './rocq'
-  #     # TODO: Replace when the rc is tagged
-  #     dockerfile: './dev/Dockerfile'
-  #     # dockerfile: './beta/Dockerfile'
-  #     keywords:
-  #       # TODO: replace when the rc is tagged
-  #       - '{matrix[rocq][%-alpha]}'
-  #       # - '{matrix[rocq][%-*]}'
-  #     args:
-  #       BASE_TAG: 'rocq_{matrix[base]}'
-  #       ROCQ_VERSION: '{matrix[rocq][//-/+]}'
-  #       # TODO: Remove ROCQ_COMMIT when the rc is tagged
-  #       ROCQ_COMMIT: '{defaults[commit]}'
-  #       # TODO: Replace when the rc is tagged
-  #       VCS_REF: '{defaults[commit][0:7]}'
-  #       # VCS_REF: 'V{matrix[rocq][//-/+]}'
-  #       ROCQ_EXTRA_OPAM: 'rocq-bignums'
-  #     tags:
-  #       # full tag
-  #       - tag: '{matrix[rocq]}-ocaml-{matrix[base]}'
-  #       # abbreviated tag (*-ocaml-4.14-flambda)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[rocq][%-alpha]}-ocaml-{matrix[base][%.*-*]}-flambda'
-  #       # - tag: '{matrix[rocq][%-*]}-ocaml-{matrix[base][%.*-*]}-flambda'
-  #       # default tag (9.2-alpha)
-  #       - tag: '{matrix[rocq]}'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # abbreviated tag (9.2)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[rocq][%-alpha]}'
-  #       # - tag: '{matrix[rocq][%-*]}'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  ## rocq/rocq-prover:9.2-alpha-native
-  # - matrix:
-  #     default: ['4.14.2']
-  #     base: ['4.14.2', '4.14.2-flambda']
-  #     # TODO: Bump to 9.2-rc1 when appropriate
-  #     rocq: ['9.2-alpha']
-  #   build:
-  #     <<: *build_rocq_edge
-  #     args:
-  #       BASE_TAG: 'rocq_{matrix[base]}'
-  #       ROCQ_VERSION: '{matrix[rocq][//-/+]}'
-  #       # TODO: Remove ROCQ_COMMIT when the rc is tagged
-  #       ROCQ_COMMIT: '{defaults[commit]}'
-  #       # TODO: Replace when the rc is tagged
-  #       VCS_REF: '{defaults[commit][0:7]}'
-  #       # VCS_REF: 'V{matrix[rocq][//-/+]}'
-  #       ROCQ_EXTRA_OPAM: 'rocq-native coq-native rocq-bignums'
-  #     tags:
-  #       # full tag
-  #       - tag: '{matrix[rocq]}-native-ocaml-{matrix[base]}'
-  #       # abbreviated tag (*-ocaml-4.14)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[rocq][%-alpha]}-native-ocaml-{matrix[base][%.*]}'
-  #       # - tag: '{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*]}'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # abbreviated tag (*-ocaml-4.14-flambda)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[rocq][%-alpha]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
-  #       # - tag: '{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*-*]}-flambda'
-  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
-  #       # default tag (9.2-alpha-native)
-  #       - tag: '{matrix[rocq]}-native'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # default tag (9.2-alpha-native-flambda)
-  #       - tag: '{matrix[rocq]}-native-flambda'
-  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
-  #       # abbreviated tag (9.2-native)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[rocq][%-alpha]}-native'
-  #       # - tag: '{matrix[rocq][%-*]}-native'
-  #         if: '{matrix[base]} == {matrix[default]}'
-  #       # abbreviated tag (9.2-native-flambda)
-  #       # TODO: Replace when the rc is tagged
-  #       - tag: '{matrix[rocq][%-alpha]}-native-flambda'
-  #       # - tag: '{matrix[rocq][%-*]}-native-flambda'
-  #         if: '{matrix[base]} != {matrix[default]}' # -flambda
-  ################################################################
+  ## rocq/rocq-prover:9.2-rc2
+  - matrix:
+      default: ["4.14.2-flambda"]
+      # only *-flambda switches
+      base: ["4.14.2-flambda"]
+      rocq: ["9.2-rc2"]
+    build: &build_rocq_edge
+      context: "./rocq"
+      dockerfile: "./beta/Dockerfile"
+      keywords:
+        - "{matrix[rocq][%-*]}"
+      args:
+        BASE_TAG: "rocq_{matrix[base]}"
+        ROCQ_VERSION: "{matrix[rocq][//-/+]}"
+        VCS_REF: "V{matrix[rocq][//-/+]}"
+        ROCQ_EXTRA_OPAM: "rocq-bignums"
+      tags:
+        # full tag
+        - tag: "{matrix[rocq]}-ocaml-{matrix[base]}"
+        # abbreviated tag (*-ocaml-4.14-flambda)
+        - tag: "{matrix[rocq][%-*]}-ocaml-{matrix[base][%.*-*]}-flambda"
+        # default tag (9.2-rc2)
+        - tag: "{matrix[rocq]}"
+          if: "{matrix[base]} == {matrix[default]}"
+        # abbreviated tag (9.2)
+        - tag: "{matrix[rocq][%-*]}"
+          if: "{matrix[base]} == {matrix[default]}"
+  ## rocq/rocq-prover:9.2-rc2-native
+  - matrix:
+      default: ["4.14.2"]
+      base: ["4.14.2", "4.14.2-flambda"]
+      rocq: ["9.2-rc2"]
+    build:
+      <<: *build_rocq_edge
+      args:
+        BASE_TAG: "rocq_{matrix[base]}"
+        ROCQ_VERSION: "{matrix[rocq][//-/+]}"
+        VCS_REF: "V{matrix[rocq][//-/+]}"
+        ROCQ_EXTRA_OPAM: "rocq-native coq-native rocq-bignums"
+      tags:
+        # full tag
+        - tag: "{matrix[rocq]}-native-ocaml-{matrix[base]}"
+        # abbreviated tag (*-ocaml-4.14)
+        - tag: "{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*]}"
+          if: "{matrix[base]} == {matrix[default]}"
+        # abbreviated tag (*-ocaml-4.14-flambda)
+        - tag: "{matrix[rocq][%-*]}-native-ocaml-{matrix[base][%.*-*]}-flambda"
+          if: "{matrix[base]} != {matrix[default]}" # -flambda
+        # default tag (9.2-rc2-native)
+        - tag: "{matrix[rocq]}-native"
+          if: "{matrix[base]} == {matrix[default]}"
+        # default tag (9.2-rc2-native-flambda)
+        - tag: "{matrix[rocq]}-native-flambda"
+          if: "{matrix[base]} != {matrix[default]}" # -flambda
+        # abbreviated tag (9.2-native)
+        - tag: "{matrix[rocq][%-*]}-native"
+          if: "{matrix[base]} == {matrix[default]}"
+        # abbreviated tag (9.2-native-flambda)
+        - tag: "{matrix[rocq][%-*]}-native-flambda"
+          if: "{matrix[base]} != {matrix[default]}" # -flambda
   ## rocq/rocq-prover:9.1.1
   ## rocq/rocq-prover:latest
   - matrix:
@@ -221,7 +186,7 @@ images:
         - tag: "{matrix[rocq]}-ocaml-{matrix[base]}"
         # abbreviated tag (*-ocaml-4.14-flambda)
         - tag: "{matrix[rocq][%.*]}-ocaml-{matrix[base][%.*-*]}-flambda"
-        # default tag (9.1.1)
+        # default tag (9.1.0)
         - tag: "{matrix[rocq]}"
           if: "{matrix[base]} == {matrix[default]}"
         # abbreviated tag (9.1)
@@ -260,10 +225,10 @@ images:
         # abbreviated tag (*-ocaml-4.14-flambda)
         - tag: "{matrix[rocq][%.*]}-native-ocaml-{matrix[base][%.*-*]}-flambda"
           if: "{matrix[base]} != {matrix[default]}" # -flambda
-        # default tag (9.1.1-native)
+        # default tag (9.1.0-native)
         - tag: "{matrix[rocq]}-native"
           if: "{matrix[base]} == {matrix[default]}"
-        # default tag (9.1.1-native-flambda)
+        # default tag (9.1.0-native-flambda)
         - tag: "{matrix[rocq]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}" # -flambda
         # abbreviated tag (9.1-native)

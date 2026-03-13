@@ -39,4 +39,4 @@ LABEL org.label-schema.build-date=${BUILD_DATE} \
   org.label-schema.vendor="The Rocq Development Team" \
   org.label-schema.version=${ROCQ_VERSION} \
   org.label-schema.schema-version="1.0" \
-  maintainer="erik@martin-dorel.org"
+  maintainer="sylvain.borgogno@inria.fr"
