@@ -186,7 +186,7 @@ images:
         - tag: "{matrix[rocq]}-ocaml-{matrix[base]}"
         # abbreviated tag (*-ocaml-4.14-flambda)
         - tag: "{matrix[rocq][%.*]}-ocaml-{matrix[base][%.*-*]}-flambda"
-        # default tag (9.1.0)
+        # default tag (9.1.1)
         - tag: "{matrix[rocq]}"
           if: "{matrix[base]} == {matrix[default]}"
         # abbreviated tag (9.1)
@@ -225,10 +225,10 @@ images:
         # abbreviated tag (*-ocaml-4.14-flambda)
         - tag: "{matrix[rocq][%.*]}-native-ocaml-{matrix[base][%.*-*]}-flambda"
           if: "{matrix[base]} != {matrix[default]}" # -flambda
-        # default tag (9.1.0-native)
+        # default tag (9.1.1-native)
         - tag: "{matrix[rocq]}-native"
           if: "{matrix[base]} == {matrix[default]}"
-        # default tag (9.1.0-native-flambda)
+        # default tag (9.1.1-native-flambda)
         - tag: "{matrix[rocq]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}" # -flambda
         # abbreviated tag (9.1-native)
