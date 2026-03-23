@@ -5,7 +5,7 @@ docker_repo: "rocq/rocq-prover"
 vars:
   # TODO: Update when appropriate
   rocq_latest: "9.1.1"
-  rocq_stdlib: "9.1.0"
+  rocq_stdlib: "9.0.0"
 args:
   BUILD_DATE: "{defaults[build_date]}"
 propagate:
