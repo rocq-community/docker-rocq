@@ -102,6 +102,39 @@ images:
         # default tag (dev-native-flambda)
         - tag: "{matrix[rocq]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}"
+  ################################################################
+  ## rocq/rocq-prover:9.3-alpha
+  - matrix:
+      default: ["4.14.2-flambda"]
+      # only *-flambda switches
+      base: ["4.14.2-flambda"]
+      rocq: ["9.3-alpha"]
+    build: &build_rocq_edge
+      commit_api:
+        fetcher: "github"
+        repo: "rocq-prover/rocq"
+        branch: "v9.3"
+      context: "./rocq"
+      dockerfile: "./dev/Dockerfile"
+      keywords:
+        - "{matrix[rocq][%-alpha]}"
+      args:
+        BASE_TAG: "rocq_{matrix[base]}"
+        ROCQ_VERSION: "{matrix[rocq]}"
+        VCS_REF: "V{matrix[rocq]}"
+        ROCQ_EXTRA_OPAM: "rocq-bignums"
+        ROCQ_STDLIB_VERSION: "{vars[rocq_stdlib]}"
+      tags:
+        # full tag
+        - tag: "{matrix[rocq]}-ocaml-{matrix[base]}"
+        # abbreviated tag (*-ocaml-4.14-flambda)
+        - tag: "{matrix[rocq][%-alpha]}-ocaml-{matrix[base][%.*-*]}-flambda"
+        # default tag (9.3-alpha)
+        - tag: "{matrix[rocq]}"
+          if: "{matrix[base]} == {matrix[default]}"
+        # abbreviated tag (9.3)
+        - tag: "{matrix[rocq][%-alpha]}"
+          if: "{matrix[base]} == {matrix[default]}"
   ## rocq/rocq-prover:9.2.0
   ## rocq/rocq-prover:latest
   - matrix:
