@@ -115,7 +115,7 @@ images:
         repo: "rocq-prover/rocq"
         branch: "v9.3"
       context: "./rocq"
-      dockerfile: "./dev/Dockerfile"
+      dockerfile: "./beta/Dockerfile"
       keywords:
         - "{matrix[rocq][%-alpha]}"
       args:
