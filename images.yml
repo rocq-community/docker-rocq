@@ -103,12 +103,12 @@ images:
         - tag: "{matrix[rocq]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}"
   ################################################################
-  ## rocq/rocq-prover:9.3-alpha
+  ## rocq/rocq-prover:9.3+alpha
   - matrix:
       default: ["4.14.2-flambda"]
       # only *-flambda switches
       base: ["4.14.2-flambda"]
-      rocq: ["9.3-alpha"]
+      rocq: ["9.3+alpha"]
     build: &build_rocq_edge
       commit_api:
         fetcher: "github"
@@ -129,7 +129,7 @@ images:
         - tag: "{matrix[rocq]}-ocaml-{matrix[base]}"
         # abbreviated tag (*-ocaml-4.14-flambda)
         - tag: "{matrix[rocq][%-alpha]}-ocaml-{matrix[base][%.*-*]}-flambda"
-        # default tag (9.3-alpha)
+        # default tag (9.3+alpha)
         - tag: "{matrix[rocq]}"
           if: "{matrix[base]} == {matrix[default]}"
         # abbreviated tag (9.3)
