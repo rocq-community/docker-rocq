@@ -124,8 +124,8 @@ images:
 
       args:
         BASE_TAG: "rocq_{matrix[base]}"
-        ROCQ_VERSION: "9.3+alpha"
-        VCS_REF: "v9.3"
+        ROCQ_VERSION: "9.3.dev"
+        VCS_REF: "V9.3+alpha"
         ROCQ_EXTRA_OPAM: "rocq-bignums"
         ROCQ_STDLIB_VERSION: "{vars[rocq_stdlib]}"
 
@@ -143,7 +143,7 @@ images:
         # abbreviated tag (9.3)
         - tag: "{matrix[rocq][%-alpha]}"
           if: "{matrix[base]} == {matrix[default]}"
-## rocq/rocq-prover:9.2.0
+
   ## rocq/rocq-prover:9.2.0
   ## rocq/rocq-prover:latest
   - matrix:
