@@ -127,7 +127,7 @@ images:
         ROCQ_VERSION: "9.3+rc1"
         VCS_REF: "V{matrix[rocq]}"
         ROCQ_EXTRA_OPAM: "rocq-bignums"
-        ROCQ_STDLIB_VERSION: "{vars[rocq_stdlib]}"
+        ROCQ_STDLIB_VERSION: "9.2.0"
 
       tags:
         # full tag
