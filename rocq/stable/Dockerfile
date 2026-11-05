@@ -18,10 +18,10 @@ RUN set -x \
   && opam update -y -u \
   && opam pin add -n -k version rocq-runtime ${ROCQ_VERSION} \
   && opam pin add -n -k version rocq-core ${ROCQ_VERSION} \
-  && opam pin add -n -k version rocqide-server ${ROCQ_VERSION} \
+  && opam pin add -n -k version coqide-server ${ROCQ_VERSION} \
   && opam pin add -n -k version rocq-stdlib ${ROCQ_STDLIB_VERSION} \
   # We don't install coq-core nor coq as they're transitional pkgs whose install time is negligible
-  && opam install -y -v -j "${NJOBS}" rocq-runtime rocq-core rocqide-server rocq-stdlib ${ROCQ_EXTRA_OPAM} \
+  && opam install -y -v -j "${NJOBS}" rocq-runtime rocq-core coqide-server rocq-stdlib ${ROCQ_EXTRA_OPAM} \
   && opam clean -a -c -s --logs \
   && chmod -R g=u /home/rocq/.opam \
   && opam config list && opam list

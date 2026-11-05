@@ -213,7 +213,9 @@ images:
         BASE_TAG: "rocq_{matrix[base]}"
         ROCQ_VERSION: "{matrix[rocq]}"
         VCS_REF: "V{matrix[rocq]}"
-        ROCQ_EXTRA_OPAM: "rocq-native coq-native rocq-bignums"
+        # no coq-native: it conflicts with OCaml 5 (base-nnp), whereas
+        # rocq-native >= 2 (rocq >= 9.2) supports it
+        ROCQ_EXTRA_OPAM: "rocq-native rocq-bignums"
         ROCQ_STDLIB_VERSION: "{vars[rocq_stdlib]}"
       tags:
         # full tag (9.3.0-native-ocaml-5.3.0, 9.3.0-native-ocaml-5.3.0-flambda)
