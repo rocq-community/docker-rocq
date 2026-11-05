@@ -45,9 +45,11 @@ propagate:
 images:
   ## rocq/rocq-prover:dev
   ## rocq/rocq-prover:dev-ocaml-*
+  # TODO: when rocq master requires OCaml >= 5.3, make 5.4.1-flambda the
+  # default here (and 5.4.1 in dev-native), then drop the 4.14.2 variants.
   - matrix:
       default: ["4.14.2-flambda"]
-      base: ["4.14.2-flambda"]
+      base: ["4.14.2-flambda", "5.4.1-flambda"]
       rocq: ["dev"]
     build: &build_rocq_dev
       keywords:
@@ -67,7 +69,7 @@ images:
       tags:
         # full tag
         - tag: "{matrix[rocq]}-ocaml-{matrix[base]}"
-        # abbreviated tag (*-ocaml-4.14-flambda)
+        # abbreviated tag (*-ocaml-4.14-flambda, *-ocaml-5.4-flambda)
         - tag: "{matrix[rocq]}-ocaml-{matrix[base][%.*-*]}-flambda"
         # default tag (dev)
         - tag: "{matrix[rocq]}"
@@ -102,14 +104,41 @@ images:
         # default tag (dev-native-flambda)
         - tag: "{matrix[rocq]}-native-flambda"
           if: "{matrix[base]} != {matrix[default]}"
+  ## rocq/rocq-prover:dev-native-ocaml-5.4.1
+  ## rocq/rocq-prover:dev-native-ocaml-5.4.1-flambda
+  # Kept apart from the block above: its "!= default" conditions assume
+  # exactly 2 bases (X and X-flambda). No coq-native: it conflicts with
+  # OCaml 5 (base-nnp), whereas rocq-native >= 2 supports it.
+  - matrix:
+      default: ["5.4.1"]
+      base: ["5.4.1", "5.4.1-flambda"]
+      rocq: ["dev"]
+    build:
+      <<: *build_rocq_dev
+      args:
+        BASE_TAG: "rocq_{matrix[base]}"
+        ROCQ_VERSION: "{matrix[rocq]}"
+        ROCQ_COMMIT: "{defaults[commit]}"
+        VCS_REF: "{defaults[commit][0:7]}"
+        ROCQ_EXTRA_OPAM: "rocq-native rocq-bignums"
+      tags:
+        # full tag (dev-native-ocaml-5.4.1, dev-native-ocaml-5.4.1-flambda)
+        - tag: "{matrix[rocq]}-native-ocaml-{matrix[base]}"
+        # abbreviated tag (dev-native-ocaml-5.4)
+        - tag: "{matrix[rocq]}-native-ocaml-{matrix[base][%.*]}"
+          if: "{matrix[base]} == {matrix[default]}"
+        # abbreviated tag (dev-native-ocaml-5.4-flambda)
+        - tag: "{matrix[rocq]}-native-ocaml-{matrix[base][%.*-*]}-flambda"
+          if: "{matrix[base]} != {matrix[default]}"
   ################################################################
   ## rocq/rocq-prover:9.3.0
   ## rocq/rocq-prover:9.3.0-ocaml-5.3.0-flambda
+  ## rocq/rocq-prover:9.3.0-ocaml-5.4.1-flambda
   ## rocq/rocq-prover:latest
   - matrix:
       default: ["4.14.2-flambda"]
       # only *-flambda switches
-      base: ["4.14.2-flambda", "5.3.0-flambda"]
+      base: ["4.14.2-flambda", "5.3.0-flambda", "5.4.1-flambda"]
       rocq: ["9.3.0"]
     build: &build_rocq_stable_current
       context: "./rocq"
@@ -207,7 +236,7 @@ images:
       default: ["5.3.0"]
       base: ["5.3.0", "5.3.0-flambda"]
       rocq: ["9.3.0"]
-    build:
+    build: &build_rocq_stable_native_ocaml5
       <<: *build_rocq_stable_current
       args:
         BASE_TAG: "rocq_{matrix[base]}"
@@ -236,6 +265,15 @@ images:
           if:
             - "{matrix[rocq]} == {vars[rocq_latest]}"
             - "{matrix[base]} != {matrix[default]}" # -flambda
+  ## rocq/rocq-prover:9.3.0-native-ocaml-5.4.1
+  ## rocq/rocq-prover:9.3.0-native-ocaml-5.4.1-flambda
+  # Same build as the OCaml 5.3 native block above (keeper's "if" only
+  # supports ==/!=, hence one block per OCaml 5 version).
+  - matrix:
+      default: ["5.4.1"]
+      base: ["5.4.1", "5.4.1-flambda"]
+      rocq: ["9.3.0"]
+    build: *build_rocq_stable_native_ocaml5
   ## rocq/rocq-prover:9.2.0
   - matrix:
       default: ["4.14.2-flambda"]
